@@ -1,0 +1,50 @@
+:trait tag Logger.Sink.Print(O val)
+  :be print(output O)
+
+:struct val Logger(
+  F Logger.Formatter(I, O)'non
+  I val = String // the type of the input logged expressions
+  O val = String // the output type emitted to the sink
+)
+  :let _level Logger.Level
+  :let _out Logger.Sink.Print(O)
+  :new val (@_out, @_level = Logger.Level.Info)
+
+  :fun shows_fatal: @_level >= Logger.Level.Fatal
+  :fun shows_error: @_level >= Logger.Level.Error
+  :fun shows_warn:  @_level >= Logger.Level.Warn
+  :fun shows_info:  @_level >= Logger.Level.Info
+  :fun shows_debug: @_level >= Logger.Level.Debug
+  :fun shows_trace: @_level >= Logger.Level.Trace
+
+  :fun non _time: Time.now
+
+  :fun val fatal(pos = source_code_position_of_argument yield)
+    :yields None for I
+    if @shows_fatal @_out.print(F.log_format_fatal(yield None, @_time, pos))
+    @
+
+  :fun val error(pos = source_code_position_of_argument yield)
+    :yields None for I
+    if @shows_error @_out.print(F.log_format_error(yield None, @_time, pos))
+    @
+
+  :fun val warn(pos = source_code_position_of_argument yield)
+    :yields None for I
+    if @shows_warn @_out.print(F.log_format_warn(yield None, @_time, pos))
+    @
+
+  :fun val info(pos = source_code_position_of_argument yield)
+    :yields None for I
+    if @shows_info @_out.print(F.log_format_info(yield None, @_time, pos))
+    @
+
+  :fun val debug(pos = source_code_position_of_argument yield)
+    :yields None for I
+    if @shows_debug @_out.print(F.log_format_debug(yield None, @_time, pos))
+    @
+
+  :fun val trace(pos = source_code_position_of_argument yield)
+    :yields None for I
+    if @shows_trace @_out.print(F.log_format_trace(yield None, @_time, pos))
+    @

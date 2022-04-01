@@ -1,0 +1,79 @@
+:alias _Log: Logger(Logger.Formatter.StringWithLevel)
+
+:class Logger.Spec
+  :is Spec
+  :const describes: "Logger"
+
+  :it "logs only those items which are at or more severe than info by default"
+    sink = _TestSink.new(@ctx), log = _Log.new(sink)
+
+    log.trace -> (Inspect[-99.5])
+    log.debug -> (Inspect[-99])
+    log.info -> ("Hello!")
+    log.warn -> ("Uh oh...")
+    log.error -> ("Whoops!")
+    log.fatal -> ("Bye!")
+
+    sink.expect([
+      // Not logged: "TRACE | -99.5"
+      // Not logged: "DEBUG | -99"
+      "INFO  | Hello!"
+      "WARN  | Uh oh..."
+      "ERROR | Whoops!"
+      "FATAL | Bye!"
+    ])
+
+    sink.finish
+
+  :it "logs everything if configured to use Logger.Level.Trace"
+    sink = _TestSink.new(@ctx), log = _Log.new(sink, Logger.Level.Trace)
+
+    log.trace -> (Inspect[-99.5])
+    log.debug -> (Inspect[-99])
+    log.info -> ("Hello!")
+    log.warn -> ("Uh oh...")
+    log.error -> ("Whoops!")
+    log.fatal -> ("Bye!")
+
+    sink.expect([
+      "TRACE | -99.5"
+      "DEBUG | -99"
+      "INFO  | Hello!"
+      "WARN  | Uh oh..."
+      "ERROR | Whoops!"
+      "FATAL | Bye!"
+    ])
+
+    sink.finish
+
+  :it "logs nothing if configured to use Logger.Level.None"
+    sink = _TestSink.new(@ctx), log = _Log.new(sink, Logger.Level.None)
+
+    log.trace -> (Inspect[-99.5])
+    log.debug -> (Inspect[-99])
+    log.info -> ("Hello!")
+    log.warn -> ("Uh oh...")
+    log.error -> ("Whoops!")
+    log.fatal -> ("Bye!")
+
+    sink.expect([]) // nothing logged
+
+    sink.finish
+
+:actor _TestSink
+  :let ctx Spec.Context
+  :let list: Array(String).new
+  :new _new(@ctx)
+  :fun non new(ctx)
+    ctx.wait_for_action("test sink")
+    @_new(ctx)
+
+  :be print(item)
+    @list << item
+
+  :be expect(list Array(String)'val)
+    assert: @list == list
+    @list.clear
+
+  :be finish
+    @ctx.finished_action("test sink")

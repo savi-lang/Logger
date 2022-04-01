@@ -1,0 +1,58 @@
+:enum Logger.Level
+  :: No messages are logged at this level.
+  ::
+  :: If this level is selected, all logs are suppressed.
+  :member None 0
+
+  :: Fatal errors are logged at this level.
+  ::
+  :: By convention, fatal errors indicate that the application cannot continue.
+  ::
+  :: If this level is selected, only fatal errors are logged.
+  :member Fatal 0b1
+
+  :: Errors are logged at this level.
+  ::
+  :: By convention, errors indicate that something exceptional has happened
+  :: that directly impedes normal operation of the application.
+  ::
+  :: If this level is selected, only errors (including fatal errors) are logged.
+  :member Error 0b10
+
+  :: Warnings are logged at this level.
+  ::
+  :: By convention, warnings indicate that something unusual has happened
+  :: that doesn't directly impede normal operation of the application, but may
+  :: potentially lead to undesirable results or may be a sign of coming errors.
+  ::
+  :: If this level is selected, both warnings and errors are logged.
+  :member Warn 0b100
+
+  :: Informational messages are logged at this level.
+  ::
+  :: By convention, informational messages present high-level (not detailed)
+  :: indications of the normal operation of the application, generally focused
+  :: on showing major changes of application state and high-level values.
+  ::
+  :: If this level is selected, informational messages, warnings, and errors
+  :: will all be logged (suppressing only debug and trace messages).
+  ::
+  :: This is the default level used by the `Logger` class.
+  :member Info 0b1000
+
+  :: Debug messages are logged at this level.
+  ::
+  :: By convention, debug messages present more detailed information about
+  :: the operation of the application, including minor or frequent changes
+  :: in application state and low-level values suitable for debugging.
+  ::
+  :: If this level is selected, only trace messages are suppressed.
+  :member Debug 0b10000
+
+  :: Tracing messages are logged at this level.
+  ::
+  :: By convention, trace messages are even more detailed than debug messages,
+  :: often indicating the start and finish of low-level application logic.
+  ::
+  :: If this level is selected, nothing is suppressed (all messages are logged).
+  :member Trace 0b100000

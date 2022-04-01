@@ -1,0 +1,40 @@
+:trait non Logger.Formatter(I, O val)
+  :fun non log_format_fatal(input I, time Time, pos SourceCodePosition) O
+  :fun non log_format_error(input I, time Time, pos SourceCodePosition) O
+  :fun non log_format_warn(input I, time Time, pos SourceCodePosition) O
+  :fun non log_format_info(input I, time Time, pos SourceCodePosition) O
+  :fun non log_format_debug(input I, time Time, pos SourceCodePosition) O
+  :fun non log_format_trace(input I, time Time, pos SourceCodePosition) O
+
+:module Logger.Formatter.StringWithLevel
+  :is Logger.Formatter(String, String)
+
+  :fun log_format_fatal(m, t Time, pos SourceCodePosition): @_format("FATAL | ", m)
+  :fun log_format_error(m, t Time, pos SourceCodePosition): @_format("ERROR | ", m)
+  :fun log_format_warn(m, t Time, pos SourceCodePosition):  @_format("WARN  | ", m)
+  :fun log_format_info(m, t Time, pos SourceCodePosition):  @_format("INFO  | ", m)
+  :fun log_format_debug(m, t Time, pos SourceCodePosition): @_format("DEBUG | ", m)
+  :fun log_format_trace(m, t Time, pos SourceCodePosition): @_format("TRACE | ", m)
+
+  :fun non _format(kind String, message String) String
+    out = String.new_iso(message.size + 8)
+    out << kind
+    out << message
+    --out
+
+:module Logger.Formatter.StringWithLevelAndTimestamp
+  :is Logger.Formatter(String, String)
+
+  :fun log_format_fatal(m, t, pos SourceCodePosition): @_format("FATAL ", m, t)
+  :fun log_format_error(m, t, pos SourceCodePosition): @_format("ERROR ", m, t)
+  :fun log_format_warn(m, t, pos SourceCodePosition):  @_format("WARN  ", m, t)
+  :fun log_format_info(m, t, pos SourceCodePosition):  @_format("INFO  ", m, t)
+  :fun log_format_debug(m, t, pos SourceCodePosition): @_format("DEBUG ", m, t)
+  :fun log_format_trace(m, t, pos SourceCodePosition): @_format("TRACE ", m, t)
+
+  :fun non _format(kind String, message String, time Time) String
+    out = String.new_iso(message.size + 6 + 26)
+    out << kind
+    out = Time.Formatter.new("%Y-%m-%d %H:%M:%S.%3N | ").format(time, --out)
+    out << message
+    --out
