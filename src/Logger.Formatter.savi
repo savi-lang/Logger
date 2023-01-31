@@ -33,8 +33,8 @@
   :fun log_format_trace(m, t, pos SourceCodePosition): @_format("TRACE ", m, t)
 
   :fun non _format(kind String, message String, time Time) String
-    out = String.new_iso(message.size + 6 + 26)
+    out = String.new(message.size + 6 + 26)
     out << kind
-    out = Time.Formatter.new("%Y-%m-%d %H:%M:%S.%3N | ").format(time, --out)
+    Time.Formatter.new("%Y-%m-%d %H:%M:%S.%3N | ").format(time, out)
     out << message
-    --out
+    out.take_buffer
